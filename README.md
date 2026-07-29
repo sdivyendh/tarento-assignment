@@ -19,13 +19,16 @@ docker info
 
 ## Project directory
 
-Run all commands from the `java-assignment` directory containing `pom.xml`:
+The contents of `java-assignment` are the repository root. After cloning the GitHub repository,
+enter the cloned directory:
 
 ```sh
-cd fcs-interview-code-assignment-main/java-assignment
+git clone https://github.com/sdivyendh/tarento-assignment.git
+cd tarento-assignment
 ```
 
-If the repository itself was opened directly at `java-assignment`, no directory change is needed.
+Run all commands from this directory. It directly contains `pom.xml`, `mvnw`, `Dockerfile`,
+`render.yaml`, and `src`; there is no nested `java-assignment` directory in GitHub.
 
 ## Run in development mode
 
@@ -52,7 +55,7 @@ Stop the application with `Ctrl+C`.
 
 ## Run from IntelliJ IDEA
 
-1. Open the `java-assignment` directory, or import its `pom.xml` as a Maven project.
+1. Open the cloned `tarento-assignment` repository, or import its `pom.xml` as a Maven project.
 2. Set the Project SDK and Maven runner JDK to version 17 or newer.
 3. Start Docker Desktop.
 4. Open the Maven tool window and run `Plugins` → `quarkus` → `quarkus:dev`.
@@ -61,7 +64,7 @@ Alternatively, create a Maven run configuration with:
 
 ```text
 Command line: quarkus:dev
-Working directory: <repository>/fcs-interview-code-assignment-main/java-assignment
+Working directory: <repository>/tarento-assignment
 ```
 
 The application is ready when the console reports:
@@ -202,7 +205,7 @@ Assignments. The Fulfilment folder covers:
 
 ### The old UI is displayed
 
-- Confirm the running configuration uses this `java-assignment` directory.
+- Confirm the running configuration uses the cloned repository root containing `pom.xml`.
 - Stop any other process using port `8080`.
 - Restart `./mvnw quarkus:dev`.
 - Perform a hard browser refresh (`Cmd+Shift+R` on macOS or `Ctrl+Shift+R` on Windows/Linux).
