@@ -1,0 +1,1377 @@
+{
+  "info": {
+    "_postman_id": "e09db455-2e23-4ae5-9069-eb15e094ea72",
+    "name": "Fulfilment Code Assignment API",
+    "description": "Import-ready collection for every HTTP endpoint exposed by the Quarkus code assignment, including the fulfilment-assignment bonus.\n\nStart the application with `./mvnw quarkus:dev`, then run requests individually or run each folder in its defined order. Create requests capture generated identifiers into collection variables so their update, replacement, filtering, and delete requests can reuse them.\n\nLocation resolution and legacy-store synchronization are internal application operations and therefore do not have their own HTTP endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "productId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "createdProductId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "productName",
+      "value": "POSTMAN-PRODUCT",
+      "type": "string"
+    },
+    {
+      "key": "storeId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "createdStoreId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "storeName",
+      "value": "POSTMAN-STORE",
+      "type": "string"
+    },
+    {
+      "key": "warehouseId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "createdWarehouseId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "warehouseBusinessUnitCode",
+      "value": "MWH.POSTMAN",
+      "type": "string"
+    },
+    {
+      "key": "assignmentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "fulfilmentWarehouseId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "previousFulfilmentWarehouseId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "fulfilmentWarehouseBusinessUnitCode",
+      "value": "MWH.PM.FULFILMENT",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Products",
+      "description": "Baseline Product CRUD API. Run this folder in order to list and read seeded products, create a uniquely named product, update it, and finally delete it.",
+      "item": [
+        {
+          "name": "List Products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    pm.expect(pm.response.json()).to.be.an(\"array\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/product",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "product"
+              ]
+            },
+            "description": "Returns all products sorted by name."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Requested product was returned\", function () {",
+                  "    pm.expect(String(pm.response.json().id)).to.eql(pm.collectionVariables.get(\"productId\"));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/product/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "product",
+                "{{productId}}"
+              ]
+            },
+            "description": "Returns the product identified by `productId`. The default value `1` refers to seeded development data."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Product",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"productName\", \"POSTMAN-PRODUCT-\" + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "if (pm.response.code === 201) {",
+                  "    const product = pm.response.json();",
+                  "    pm.expect(product.id).to.exist;",
+                  "    pm.collectionVariables.set(\"createdProductId\", String(product.id));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{productName}}\",\n  \"description\": \"Created from the Postman collection\",\n  \"price\": 12.50,\n  \"stock\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/product",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "product"
+              ]
+            },
+            "description": "Creates a product. Do not provide an `id`; the database generates it. The pre-request script generates a unique name, and the test script saves the response ID as `createdProductId`."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Created Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Product fields were updated\", function () {",
+                  "    const product = pm.response.json();",
+                  "    pm.expect(product.name).to.eql(pm.collectionVariables.get(\"productName\") + \"-UPDATED\");",
+                  "    pm.expect(product.stock).to.eql(7);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{productName}}-UPDATED\",\n  \"description\": \"Updated from the Postman collection\",\n  \"price\": 15.75,\n  \"stock\": 7\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/product/{{createdProductId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "product",
+                "{{createdProductId}}"
+              ]
+            },
+            "description": "Fully updates the product created by the preceding request. Run Create Product first so `createdProductId` is populated."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Created Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/product/{{createdProductId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "product",
+                "{{createdProductId}}"
+              ]
+            },
+            "description": "Deletes the product created during this workflow."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Stores",
+      "description": "Store CRUD API. Create, PUT, and PATCH trigger the simulated legacy synchronization only after the database transaction commits successfully. Run this folder in order for a complete create/update/delete workflow.",
+      "item": [
+        {
+          "name": "List Stores",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    pm.expect(pm.response.json()).to.be.an(\"array\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/store",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "store"
+              ]
+            },
+            "description": "Returns all stores sorted by name."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Store",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Requested store was returned\", function () {",
+                  "    pm.expect(String(pm.response.json().id)).to.eql(pm.collectionVariables.get(\"storeId\"));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/store/{{storeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "store",
+                "{{storeId}}"
+              ]
+            },
+            "description": "Returns the store identified by `storeId`. The default value `1` refers to seeded development data."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Store",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"storeName\", \"POSTMAN-STORE-\" + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "if (pm.response.code === 201) {",
+                  "    const store = pm.response.json();",
+                  "    pm.expect(store.id).to.exist;",
+                  "    pm.collectionVariables.set(\"createdStoreId\", String(store.id));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{storeName}}\",\n  \"quantityProductsInStock\": 12\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/store",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "store"
+              ]
+            },
+            "description": "Creates a store and captures its generated ID as `createdStoreId`. After the transaction commits, the simulated legacy gateway runs and reports its activity in the application terminal."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Created Store",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Store fields were updated\", function () {",
+                  "    const store = pm.response.json();",
+                  "    pm.expect(store.name).to.eql(pm.collectionVariables.get(\"storeName\") + \"-UPDATED\");",
+                  "    pm.expect(store.quantityProductsInStock).to.eql(8);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{storeName}}-UPDATED\",\n  \"quantityProductsInStock\": 8\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/store/{{createdStoreId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "store",
+                "{{createdStoreId}}"
+              ]
+            },
+            "description": "Fully updates the store created by the preceding request and synchronizes the committed value to the simulated legacy system."
+          },
+          "response": []
+        },
+        {
+          "name": "Patch Created Store Stock to Zero",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"An explicit stock value of zero was applied\", function () {",
+                  "    pm.expect(pm.response.json().quantityProductsInStock).to.eql(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantityProductsInStock\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/store/{{createdStoreId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "store",
+                "{{createdStoreId}}"
+              ]
+            },
+            "description": "Partially updates only the stock quantity. This request demonstrates that an explicit value of `0` is different from omitting the field."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Created Store",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/store/{{createdStoreId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "store",
+                "{{createdStoreId}}"
+              ]
+            },
+            "description": "Deletes the store created during this workflow."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Warehouses",
+      "description": "Assignment Warehouse API. Only active warehouses are returned. Replacement atomically archives the predecessor and creates a successor with a new ID; archive is a soft delete. Run this folder in order for a complete workflow.",
+      "item": [
+        {
+          "name": "List Active Warehouses",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    pm.expect(pm.response.json()).to.be.an(\"array\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/warehouse",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "warehouse"
+              ]
+            },
+            "description": "Returns every active warehouse sorted by business-unit code. Archived history is intentionally omitted."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Active Warehouse",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Requested warehouse was returned\", function () {",
+                  "    pm.expect(String(pm.response.json().id)).to.eql(pm.collectionVariables.get(\"warehouseId\"));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/warehouse/{{warehouseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "warehouse",
+                "{{warehouseId}}"
+              ]
+            },
+            "description": "Returns the active warehouse identified by a positive numeric ID. The default value `1` refers to seeded development data."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Warehouse",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"warehouseBusinessUnitCode\", \"MWH.PM.\" + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "if (pm.response.code === 201) {",
+                  "    const warehouse = pm.response.json();",
+                  "    pm.expect(warehouse.id).to.exist;",
+                  "    pm.collectionVariables.set(\"createdWarehouseId\", String(warehouse.id));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"businessUnitCode\": \"{{warehouseBusinessUnitCode}}\",\n  \"location\": \"ZWOLLE-002\",\n  \"capacity\": 20,\n  \"stock\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/warehouse",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "warehouse"
+              ]
+            },
+            "description": "Creates a valid warehouse at an initially unused seeded location. Do not send an `id`. The pre-request script generates a unique business-unit code, and the test script saves the generated ID as `createdWarehouseId`."
+          },
+          "response": []
+        },
+        {
+          "name": "Replace Created Warehouse",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    const replacement = pm.response.json();",
+                  "    pm.expect(replacement.id).to.exist;",
+                  "    pm.expect(replacement.stock).to.eql(5);",
+                  "    pm.collectionVariables.set(\"createdWarehouseId\", String(replacement.id));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"businessUnitCode\": \"{{warehouseBusinessUnitCode}}\",\n  \"location\": \"ZWOLLE-002\",\n  \"capacity\": 30,\n  \"stock\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/warehouse/{{warehouseBusinessUnitCode}}/replacement",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "warehouse",
+                "{{warehouseBusinessUnitCode}}",
+                "replacement"
+              ]
+            },
+            "description": "Atomically archives the active warehouse created by the preceding request and creates its replacement. The body business-unit code must match the URL, and stock must remain exactly `5`. The returned successor ID replaces `createdWarehouseId`."
+          },
+          "response": []
+        },
+        {
+          "name": "Archive Replacement Warehouse",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/warehouse/{{createdWarehouseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "warehouse",
+                "{{createdWarehouseId}}"
+              ]
+            },
+            "description": "Soft-archives the active replacement warehouse. It will no longer appear in list or get operations, but its history remains in the database."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Fulfilment Assignments",
+      "description": "Bonus workflow for associating a Store and Product with an active Warehouse. Run this folder in order. It covers list, create, all supported filters, duplicate rejection, explicit assignment deletion, warehouse replacement transfer, and archive cleanup. The API enforces at most 2 warehouses per product/store, 3 warehouses per store, and 5 product types per warehouse.",
+      "item": [
+        {
+          "name": "List Fulfilment Assignments",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    pm.expect(pm.response.json()).to.be.an(\"array\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fulfilment-assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fulfilment-assignments"
+              ]
+            },
+            "description": "Returns every current Store-Product-Warehouse assignment."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Fulfilment Workflow Warehouse",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"fulfilmentWarehouseBusinessUnitCode\", \"MWH.PM.FUL.\" + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "if (pm.response.code === 201) {",
+                  "    const warehouse = pm.response.json();",
+                  "    pm.expect(warehouse.id).to.exist;",
+                  "    pm.collectionVariables.set(\"fulfilmentWarehouseId\", String(warehouse.id));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"businessUnitCode\": \"{{fulfilmentWarehouseBusinessUnitCode}}\",\n  \"location\": \"ZWOLLE-002\",\n  \"capacity\": 20,\n  \"stock\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/warehouse",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "warehouse"
+              ]
+            },
+            "description": "Creates a dedicated active warehouse for this workflow and saves its generated identifier as `fulfilmentWarehouseId`."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Fulfilment Assignment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "if (pm.response.code === 201) {",
+                  "    const assignment = pm.response.json();",
+                  "    pm.expect(String(assignment.storeId)).to.eql(pm.collectionVariables.get(\"storeId\"));",
+                  "    pm.expect(String(assignment.productId)).to.eql(pm.collectionVariables.get(\"productId\"));",
+                  "    pm.expect(String(assignment.warehouseId)).to.eql(pm.collectionVariables.get(\"fulfilmentWarehouseId\"));",
+                  "    pm.collectionVariables.set(\"assignmentId\", String(assignment.id));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"storeId\": {{storeId}},\n  \"productId\": {{productId}},\n  \"warehouseId\": {{fulfilmentWarehouseId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/fulfilment-assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fulfilment-assignments"
+              ]
+            },
+            "description": "Creates an assignment using the default seeded Store and Product plus the workflow warehouse. Saves the generated ID as `assignmentId`."
+          },
+          "response": []
+        },
+        {
+          "name": "Filter Assignments by Store",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Every result belongs to the selected store\", function () {",
+                  "    const storeId = pm.collectionVariables.get(\"storeId\");",
+                  "    const assignments = pm.response.json();",
+                  "    pm.expect(assignments.map(item => String(item.id))).to.include(pm.collectionVariables.get(\"assignmentId\"));",
+                  "    assignments.forEach(item => pm.expect(String(item.storeId)).to.eql(storeId));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fulfilment-assignments?storeId={{storeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fulfilment-assignments"
+              ],
+              "query": [
+                {
+                  "key": "storeId",
+                  "value": "{{storeId}}"
+                }
+              ]
+            },
+            "description": "Filters assignments by Store ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Filter Assignments by Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Every result belongs to the selected product\", function () {",
+                  "    const productId = pm.collectionVariables.get(\"productId\");",
+                  "    const assignments = pm.response.json();",
+                  "    pm.expect(assignments.map(item => String(item.id))).to.include(pm.collectionVariables.get(\"assignmentId\"));",
+                  "    assignments.forEach(item => pm.expect(String(item.productId)).to.eql(productId));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fulfilment-assignments?productId={{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fulfilment-assignments"
+              ],
+              "query": [
+                {
+                  "key": "productId",
+                  "value": "{{productId}}"
+                }
+              ]
+            },
+            "description": "Filters assignments by Product ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Filter Assignments by Warehouse",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Every result belongs to the selected warehouse\", function () {",
+                  "    const warehouseId = pm.collectionVariables.get(\"fulfilmentWarehouseId\");",
+                  "    const assignments = pm.response.json();",
+                  "    pm.expect(assignments.map(item => String(item.id))).to.include(pm.collectionVariables.get(\"assignmentId\"));",
+                  "    assignments.forEach(item => pm.expect(String(item.warehouseId)).to.eql(warehouseId));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fulfilment-assignments?warehouseId={{fulfilmentWarehouseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fulfilment-assignments"
+              ],
+              "query": [
+                {
+                  "key": "warehouseId",
+                  "value": "{{fulfilmentWarehouseId}}"
+                }
+              ]
+            },
+            "description": "Filters assignments by active Warehouse ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Reject Duplicate Fulfilment Assignment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "pm.test(\"Duplicate conflict is explained\", function () {",
+                  "    const error = pm.response.json();",
+                  "    pm.expect(error.code).to.eql(409);",
+                  "    pm.expect(error.error).to.include(\"already exists\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"storeId\": {{storeId}},\n  \"productId\": {{productId}},\n  \"warehouseId\": {{fulfilmentWarehouseId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/fulfilment-assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fulfilment-assignments"
+              ]
+            },
+            "description": "Repeats the same Store-Product-Warehouse combination and verifies the API returns HTTP 409."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Fulfilment Assignment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fulfilment-assignments/{{assignmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fulfilment-assignments",
+                "{{assignmentId}}"
+              ]
+            },
+            "description": "Permanently deletes the assignment created by this folder."
+          },
+          "response": []
+        },
+        {
+          "name": "Recreate Assignment for Warehouse Lifecycle",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set(\"assignmentId\", String(pm.response.json().id));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"storeId\": {{storeId}},\n  \"productId\": {{productId}},\n  \"warehouseId\": {{fulfilmentWarehouseId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/fulfilment-assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fulfilment-assignments"
+              ]
+            },
+            "description": "Recreates the assignment so the following requests can verify warehouse replacement and archive lifecycle behavior."
+          },
+          "response": []
+        },
+        {
+          "name": "Replace Assigned Warehouse",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    const predecessorId = pm.collectionVariables.get(\"fulfilmentWarehouseId\");",
+                  "    const replacement = pm.response.json();",
+                  "    pm.expect(String(replacement.id)).not.to.eql(predecessorId);",
+                  "    pm.collectionVariables.set(\"previousFulfilmentWarehouseId\", predecessorId);",
+                  "    pm.collectionVariables.set(\"fulfilmentWarehouseId\", String(replacement.id));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"businessUnitCode\": \"{{fulfilmentWarehouseBusinessUnitCode}}\",\n  \"location\": \"ZWOLLE-002\",\n  \"capacity\": 30,\n  \"stock\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/warehouse/{{fulfilmentWarehouseBusinessUnitCode}}/replacement",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "warehouse",
+                "{{fulfilmentWarehouseBusinessUnitCode}}",
+                "replacement"
+              ]
+            },
+            "description": "Replaces the warehouse while preserving stock. The bonus implementation transfers its assignment to the generated successor ID in the same transaction."
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Assignment Transferred to Replacement",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Assignment references the replacement warehouse\", function () {",
+                  "    const assignments = pm.response.json();",
+                  "    const expectedAssignmentId = pm.collectionVariables.get(\"assignmentId\");",
+                  "    const replacementId = pm.collectionVariables.get(\"fulfilmentWarehouseId\");",
+                  "    const assignment = assignments.find(item => String(item.id) === expectedAssignmentId);",
+                  "    pm.expect(assignment).to.exist;",
+                  "    pm.expect(String(assignment.warehouseId)).to.eql(replacementId);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fulfilment-assignments?warehouseId={{fulfilmentWarehouseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fulfilment-assignments"
+              ],
+              "query": [
+                {
+                  "key": "warehouseId",
+                  "value": "{{fulfilmentWarehouseId}}"
+                }
+              ]
+            },
+            "description": "Confirms the assignment retained its ID and now references the replacement warehouse."
+          },
+          "response": []
+        },
+        {
+          "name": "Archive Assigned Replacement Warehouse",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/warehouse/{{fulfilmentWarehouseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "warehouse",
+                "{{fulfilmentWarehouseId}}"
+              ]
+            },
+            "description": "Archives the assigned replacement warehouse. Archiving also removes its fulfilment assignments in the same transaction."
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Archive Removed Assignments",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Archived warehouse has no assignments\", function () {",
+                  "    pm.expect(pm.response.json()).to.eql([]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fulfilment-assignments?warehouseId={{fulfilmentWarehouseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fulfilment-assignments"
+              ],
+              "query": [
+                {
+                  "key": "warehouseId",
+                  "value": "{{fulfilmentWarehouseId}}"
+                }
+              ]
+            },
+            "description": "Confirms archive lifecycle cleanup removed the assignment."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

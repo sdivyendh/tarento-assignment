@@ -1,0 +1,14 @@
+/Users/divyendhsuresh/Downloads/FnCS_Casestudy2/fcs-interview-code-assignment-main/java-assignment/src/test/java/com/fulfilment/application/monolith/warehouses/adapters/restapi/WarehouseEndpointTest.java
+/Users/divyendhsuresh/Downloads/FnCS_Casestudy2/fcs-interview-code-assignment-main/java-assignment/src/test/java/com/fulfilment/application/monolith/stores/StoreResourceSynchronizationTest.java
+/Users/divyendhsuresh/Downloads/FnCS_Casestudy2/fcs-interview-code-assignment-main/java-assignment/src/test/java/com/fulfilment/application/monolith/warehouses/domain/usecases/ReplaceWarehouseUseCaseTest.java
+/Users/divyendhsuresh/Downloads/FnCS_Casestudy2/fcs-interview-code-assignment-main/java-assignment/src/test/java/com/fulfilment/application/monolith/fulfilments/FulfilmentAssignmentEndpointTest.java
+/Users/divyendhsuresh/Downloads/FnCS_Casestudy2/fcs-interview-code-assignment-main/java-assignment/src/test/java/com/fulfilment/application/monolith/warehouses/adapters/database/WarehouseReplacementTransactionTest.java
+/Users/divyendhsuresh/Downloads/FnCS_Casestudy2/fcs-interview-code-assignment-main/java-assignment/src/test/java/com/fulfilment/application/monolith/location/LocationGatewayTest.java
+/Users/divyendhsuresh/Downloads/FnCS_Casestudy2/fcs-interview-code-assignment-main/java-assignment/src/test/java/com/fulfilment/application/monolith/products/ProductEndpointTest.java
+/Users/divyendhsuresh/Downloads/FnCS_Casestudy2/fcs-interview-code-assignment-main/java-assignment/src/test/java/com/fulfilment/application/monolith/fulfilments/FulfilmentAssignmentServiceTest.java
+/Users/divyendhsuresh/Downloads/FnCS_Casestudy2/fcs-interview-code-assignment-main/java-assignment/src/test/java/com/fulfilment/application/monolith/warehouses/adapters/database/WarehouseRepositoryTest.java
+/Users/divyendhsuresh/Downloads/FnCS_Casestudy2/fcs-interview-code-assignment-main/java-assignment/src/test/java/com/fulfilment/application/monolith/warehouses/domain/usecases/WarehouseUseCaseTestSupport.java
+/Users/divyendhsuresh/Downloads/FnCS_Casestudy2/fcs-interview-code-assignment-main/java-assignment/src/test/java/com/fulfilment/application/monolith/warehouses/domain/usecases/ArchiveWarehouseUseCaseTest.java
+/Users/divyendhsuresh/Downloads/FnCS_Casestudy2/fcs-interview-code-assignment-main/java-assignment/src/test/java/com/fulfilment/application/monolith/warehouses/adapters/database/FlywaySchemaTest.java
+/Users/divyendhsuresh/Downloads/FnCS_Casestudy2/fcs-interview-code-assignment-main/java-assignment/src/test/java/com/fulfilment/application/monolith/warehouses/domain/usecases/CreateWarehouseUseCaseTest.java
+/Users/divyendhsuresh/Downloads/FnCS_Casestudy2/fcs-interview-code-assignment-main/java-assignment/src/test/java/com/fulfilment/application/monolith/stores/StoreChangedEventTest.java

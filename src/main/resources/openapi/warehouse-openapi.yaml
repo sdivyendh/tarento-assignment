@@ -1,0 +1,184 @@
+openapi: 3.0.0
+info:
+  title: Warehouse API
+  description: API for managing warehouse units
+  version: 1.0.0
+
+paths:
+  /warehouse:
+    get:
+      summary: List all warehouses units
+      responses:
+        '200':
+          description: A list of warehouse units
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Warehouse'
+    post:
+      summary: Create a new warehouse unit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Warehouse'
+      responses:
+        '201':
+          description: Warehouse unit created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Warehouse'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /warehouse/{id}:
+    get:
+      summary: Get a warehouse unit by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the warehouse unit to get
+          schema:
+            type: string
+            pattern: '^[1-9][0-9]*$'
+      responses:
+        '200':
+          description: Warehouse unit found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Warehouse'
+        '404':
+          description: Warehouse unit not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '400':
+          description: Invalid warehouse ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Archive a warehouse unit by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the warehouse unit to archive
+          schema:
+            type: string
+            pattern: '^[1-9][0-9]*$'
+      responses:
+        '204':
+          description: Warehouse unit archived
+        '404':
+          description: Warehouse unit not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '400':
+          description: Invalid warehouse ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /warehouse/{businessUnitCode}/replacement:
+    post:
+      summary: Replace the current active Warehouse
+      description: |
+        Replaces the current active Warehouse identified by `businessUnitCode` unit by a new Warehouse provided in the request body
+        A Warehouse can be replaced by another Warehouse with the same Business Unit Code.
+        That means that the previous Warehouse will be archived and the new Warehouse will be created assuming its place.
+      parameters:
+        - name: businessUnitCode
+          in: path
+          required: true
+          description: Business unit code of the warehouse unit to replace
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 40
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Warehouse'
+      responses:
+        '200':
+          description: Warehouse unit replaced
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Warehouse'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Warehouse unit not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Warehouse:
+      type: object
+      required:
+        - id
+        - businessUnitCode
+        - location
+        - capacity
+        - stock
+      properties:
+        id:
+          type: string
+          readOnly: true
+          example: "456"
+        businessUnitCode:
+          type: string
+          minLength: 1
+          maxLength: 40
+          example: "MWH.001"
+        location:
+          type: string
+          minLength: 1
+          maxLength: 40
+          example: "AMSTERDAM-001"
+        capacity:
+          type: integer
+          minimum: 1
+          example: 100
+        stock:
+          type: integer
+          minimum: 0
+          example: 50
+    Error:
+      type: object
+      required:
+        - code
+        - error
+      properties:
+        code:
+          type: integer
+          example: 400
+        error:
+          type: string
+          example: Warehouse capacity must be greater than zero.
