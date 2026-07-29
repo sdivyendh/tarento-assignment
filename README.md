@@ -126,7 +126,7 @@ data using `import.sql`.
 
 The repository includes:
 
-- `Dockerfile.render`, which builds and runs the Quarkus JVM application
+- `Dockerfile`, which builds and runs the Quarkus JVM application
 - `.dockerignore`, which keeps local build and IDE files out of the Docker context
 - `render.yaml`, which configures a free Render web service in Singapore and connects it to the
   existing PostgreSQL database through its internal hostname
