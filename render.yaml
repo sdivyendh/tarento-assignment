@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: fulfilment-console
+    runtime: docker
+    plan: free
+    region: singapore
+    branch: main
+    dockerfilePath: ./Dockerfile.render
+    dockerContext: .
+    healthCheckPath: /index.html
+    autoDeployTrigger: commit
+    envVars:
+      - key: PORT
+        value: "10000"
+      - key: JDBC_DATABASE_URL
+        value: jdbc:postgresql://dpg-d9kvk2tbedkc73bis4hg-a:5432/fulfilment
+      - key: DB_USERNAME
+        value: fulfilment_user
+      - key: DB_PASSWORD
+        sync: false
+      - key: JAVA_MAX_MEM_RATIO
+        value: "60"

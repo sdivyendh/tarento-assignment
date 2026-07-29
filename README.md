@@ -117,9 +117,35 @@ In another terminal, build and start the application:
 java -jar target/quarkus-app/quarkus-run.jar
 ```
 
-Production datasource settings are in `src/main/resources/application.properties`. On startup,
-Flyway applies the migrations in `src/main/resources/db/migration`. Production startup does not
-load or replace data using `import.sql`.
+Production datasource settings are in `src/main/resources/application.properties`. They can be
+overridden with `DB_USERNAME`, `DB_PASSWORD`, and `JDBC_DATABASE_URL`. On startup, Flyway applies
+the migrations in `src/main/resources/db/migration`. Production startup does not load or replace
+data using `import.sql`.
+
+## Deploy to Render
+
+The repository includes:
+
+- `Dockerfile.render`, which builds and runs the Quarkus JVM application
+- `.dockerignore`, which keeps local build and IDE files out of the Docker context
+- `render.yaml`, which configures a free Render web service in Singapore and connects it to the
+  existing PostgreSQL database through its internal hostname
+
+Before deploying, rotate the PostgreSQL password in Render because a previously shared password
+must be treated as exposed. Do not add the replacement password to Git.
+
+Deploy with a Render Blueprint:
+
+1. Push this repository and the deployment files to GitHub.
+2. In Render, select **New** → **Blueprint**.
+3. Connect the GitHub repository and select the `render.yaml` Blueprint.
+4. When Render prompts for `DB_PASSWORD`, enter the newly rotated database password.
+5. Apply the Blueprint and wait for the health check at `/index.html` to pass.
+
+The committed Blueprint contains the non-secret internal JDBC URL and database username. Render
+injects the password at runtime because `DB_PASSWORD` is declared with `sync: false`. The web
+service and database must remain in the Singapore region for the internal database hostname to be
+reachable.
 
 ## Available UI and APIs
 

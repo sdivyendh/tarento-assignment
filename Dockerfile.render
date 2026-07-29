@@ -2,15 +2,10 @@ FROM maven:3.9.9-eclipse-temurin-17 AS build
 
 WORKDIR /workspace
 
-COPY pom.xml mvnw mvnw.cmd ./
-COPY .mvn .mvn
-
-RUN chmod +x mvnw
-RUN ./mvnw -B dependency:go-offline
-
+COPY pom.xml ./
 COPY src src
 
-RUN ./mvnw -B clean package -DskipTests
+RUN mvn -B clean package -DskipTests
 
 
 FROM registry.access.redhat.com/ubi8/openjdk-17:1.19
