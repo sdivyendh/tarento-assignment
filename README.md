@@ -122,8 +122,9 @@ java -jar target/quarkus-app/quarkus-run.jar
 
 Production datasource settings are in `src/main/resources/application.properties`. They can be
 overridden with `DB_USERNAME`, `DB_PASSWORD`, and `JDBC_DATABASE_URL`. On startup, Flyway applies
-the migrations in `src/main/resources/db/migration`. Production startup does not load or replace
-data using `import.sql`.
+the migrations in `src/main/resources/db/migration`. Migration V3 inserts the demonstration
+products, stores, and warehouses once. Production startup does not repeatedly load or replace data
+using `import.sql`.
 
 ## Deploy to Render
 

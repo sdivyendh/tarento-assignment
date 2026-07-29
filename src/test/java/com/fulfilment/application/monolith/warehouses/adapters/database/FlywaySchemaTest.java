@@ -21,13 +21,19 @@ class FlywaySchemaTest {
   @Test
   void migrationCreatesASchemaThatMatchesTheJpaModel() {
     // Quarkus startup performs Hibernate "validate"; reaching this assertion proves compatibility.
-    assertEquals(0L, warehouseRepository.count());
-    Number locationLocks =
+    assertEquals(3L, warehouseRepository.count());
+    assertEquals(3L, countRows("Store"));
+    assertEquals(3L, countRows("Product"));
+    assertEquals(8L, countRows("warehouse_location_lock"));
+  }
+
+  private long countRows(String tableName) {
+    Number rowCount =
         (Number)
             entityManager
-                .createNativeQuery("select count(*) from warehouse_location_lock")
+                .createNativeQuery("select count(*) from " + tableName)
                 .getSingleResult();
-    assertEquals(8L, locationLocks.longValue());
+    return rowCount.longValue();
   }
 
   public static class FlywayProfile implements QuarkusTestProfile {
