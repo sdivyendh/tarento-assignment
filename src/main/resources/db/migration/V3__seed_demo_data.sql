@@ -1,18 +1,26 @@
 INSERT INTO Store(id, name, quantityProductsInStock)
-VALUES (1, 'TONSTAD', 10);
+SELECT nextval('store_seq'), 'TONSTAD', 10
+WHERE NOT EXISTS (SELECT 1 FROM Store WHERE name = 'TONSTAD');
+
 INSERT INTO Store(id, name, quantityProductsInStock)
-VALUES (2, 'KALLAX', 5);
+SELECT nextval('store_seq'), 'KALLAX', 5
+WHERE NOT EXISTS (SELECT 1 FROM Store WHERE name = 'KALLAX');
+
 INSERT INTO Store(id, name, quantityProductsInStock)
-VALUES (3, 'BESTÅ', 3);
-ALTER SEQUENCE Store_SEQ RESTART WITH 4;
+SELECT nextval('store_seq'), 'BESTÅ', 3
+WHERE NOT EXISTS (SELECT 1 FROM Store WHERE name = 'BESTÅ');
 
 INSERT INTO Product(id, name, stock)
-VALUES (1, 'TONSTAD', 10);
+SELECT nextval('product_seq'), 'TONSTAD', 10
+WHERE NOT EXISTS (SELECT 1 FROM Product WHERE name = 'TONSTAD');
+
 INSERT INTO Product(id, name, stock)
-VALUES (2, 'KALLAX', 5);
+SELECT nextval('product_seq'), 'KALLAX', 5
+WHERE NOT EXISTS (SELECT 1 FROM Product WHERE name = 'KALLAX');
+
 INSERT INTO Product(id, name, stock)
-VALUES (3, 'BESTÅ', 3);
-ALTER SEQUENCE Product_SEQ RESTART WITH 4;
+SELECT nextval('product_seq'), 'BESTÅ', 3
+WHERE NOT EXISTS (SELECT 1 FROM Product WHERE name = 'BESTÅ');
 
 INSERT INTO warehouse(
     id,
@@ -24,7 +32,19 @@ INSERT INTO warehouse(
     createdAt,
     archivedAt
 )
-VALUES (1, 'MWH.001', 'MWH.001', 'ZWOLLE-001', 40, 10, '2024-07-01', NULL);
+SELECT
+    nextval('warehouse_seq'),
+    'MWH.001',
+    'MWH.001',
+    'ZWOLLE-001',
+    40,
+    10,
+    '2024-07-01',
+    NULL
+WHERE NOT EXISTS (
+    SELECT 1 FROM warehouse WHERE businessUnitCode = 'MWH.001'
+);
+
 INSERT INTO warehouse(
     id,
     businessUnitCode,
@@ -35,7 +55,19 @@ INSERT INTO warehouse(
     createdAt,
     archivedAt
 )
-VALUES (2, 'MWH.012', 'MWH.012', 'AMSTERDAM-001', 50, 5, '2023-07-01', NULL);
+SELECT
+    nextval('warehouse_seq'),
+    'MWH.012',
+    'MWH.012',
+    'AMSTERDAM-001',
+    50,
+    5,
+    '2023-07-01',
+    NULL
+WHERE NOT EXISTS (
+    SELECT 1 FROM warehouse WHERE businessUnitCode = 'MWH.012'
+);
+
 INSERT INTO warehouse(
     id,
     businessUnitCode,
@@ -46,5 +78,15 @@ INSERT INTO warehouse(
     createdAt,
     archivedAt
 )
-VALUES (3, 'MWH.023', 'MWH.023', 'TILBURG-001', 30, 27, '2021-02-01', NULL);
-ALTER SEQUENCE warehouse_SEQ RESTART WITH 4;
+SELECT
+    nextval('warehouse_seq'),
+    'MWH.023',
+    'MWH.023',
+    'TILBURG-001',
+    30,
+    27,
+    '2021-02-01',
+    NULL
+WHERE NOT EXISTS (
+    SELECT 1 FROM warehouse WHERE businessUnitCode = 'MWH.023'
+);
