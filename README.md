@@ -1,5 +1,7 @@
 # Java Code Assignment
 
+[![Build and Test](https://github.com/sdivyendh/tarento-assignment/actions/workflows/ci.yml/badge.svg)](https://github.com/sdivyendh/tarento-assignment/actions/workflows/ci.yml)
+
 This Quarkus application implements the product, store, warehouse, and fulfilment-assignment
 workflows described in [CODE_ASSIGNMENT.md](CODE_ASSIGNMENT.md).
 
@@ -116,9 +118,14 @@ Machine-readable reports are also generated at `target/jacoco-report/jacoco.xml`
 `target/jacoco-report/jacoco.csv`. Generated OpenAPI classes under `com.warehouse.api` are excluded
 because they are not maintained application source.
 
-The GitHub Actions workflow `.github/workflows/coverage.yml` runs the same verification for every
-push and pull request. It adds the current metrics to the workflow summary and stores the complete
-JaCoCo report as the `jacoco-coverage-report` artifact for 30 days.
+The GitHub Actions workflow `.github/workflows/ci.yml` runs the verification build for pull
+requests, pushes to `main`, and manual workflow runs. It also validates the production Docker image,
+adds test and coverage metrics to the workflow summary, and retains these downloadable artifacts
+for 30 days:
+
+- `test-results`: Maven Surefire text and XML test reports
+- `jacoco-coverage-report`: complete HTML, XML, and CSV coverage reports
+- `quarkus-application`: packaged JVM application from a successful build
 
 ## Run the packaged application
 
