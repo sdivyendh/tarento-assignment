@@ -1,4 +1,4 @@
-package com.fulfilment.application.monolith.products;
+package com.fulfilment.application.monolith.stores;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -12,22 +12,17 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
-class ProductEndpointTest {
+class StoreEndpointTest {
 
-  private static final String PATH = "/product";
+  private static final String PATH = "/store";
 
   @Test
-  void createsListsGetsUpdatesAndDeletesAProduct() {
-    String originalName = uniqueName("product");
+  void createsListsGetsUpdatesPatchesAndDeletesAStore() {
+    String originalName = uniqueName("store");
     Response created =
         given()
             .contentType(ContentType.JSON)
-            .body(
-                Map.of(
-                    "name", originalName,
-                    "description", "Original description",
-                    "price", 19.95,
-                    "stock", 7))
+            .body(Map.of("name", originalName, "quantityProductsInStock", 6))
             .when()
             .post(PATH)
             .then()
@@ -49,35 +44,42 @@ class ProductEndpointTest {
         .get(PATH + "/" + id.longValue())
         .then()
         .statusCode(200)
-        .body("name", equalTo(originalName))
-        .body("stock", equalTo(7));
+        .body("quantityProductsInStock", equalTo(6));
 
-    String updatedName = uniqueName("updated");
+    String updatedName = uniqueName("updated-store");
     given()
         .contentType(ContentType.JSON)
-        .body(
-            Map.of(
-                "name", updatedName,
-                "description", "Updated description",
-                "price", 24.50,
-                "stock", 9))
+        .body(Map.of("name", updatedName, "quantityProductsInStock", 11))
         .when()
         .put(PATH + "/" + id.longValue())
         .then()
         .statusCode(200)
         .body("name", equalTo(updatedName))
-        .body("description", equalTo("Updated description"))
-        .body("stock", equalTo(9));
+        .body("quantityProductsInStock", equalTo(11));
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(Map.of("quantityProductsInStock", 0))
+        .when()
+        .patch(PATH + "/" + id.longValue())
+        .then()
+        .statusCode(200)
+        .body("name", equalTo(updatedName))
+        .body("quantityProductsInStock", equalTo(0));
 
     given().when().delete(PATH + "/" + id.longValue()).then().statusCode(204);
     given().when().get(PATH + "/" + id.longValue()).then().statusCode(404);
   }
 
   @Test
-  void rejectsInvalidProductRequestsAndMissingProducts() {
+  void rejectsInvalidStoreRequestsAndMissingStores() {
     given()
         .contentType(ContentType.JSON)
-        .body(Map.of("id", 99, "name", uniqueName("invalid"), "stock", 1))
+        .body(
+            Map.of(
+                "id", 99,
+                "name", uniqueName("invalid-store"),
+                "quantityProductsInStock", 1))
         .when()
         .post(PATH)
         .then()
@@ -86,20 +88,36 @@ class ProductEndpointTest {
 
     given()
         .contentType(ContentType.JSON)
-        .body(Map.of("stock", 1))
+        .body(Map.of("quantityProductsInStock", 1))
         .when()
         .put(PATH + "/999999")
         .then()
         .statusCode(422)
-        .body("error", equalTo("Product Name was not set on request."));
+        .body("error", equalTo("Store Name was not set on request."));
 
     given()
         .contentType(ContentType.JSON)
-        .body(Map.of("name", uniqueName("missing"), "stock", 1))
+        .body(Map.of("name", uniqueName("missing-store"), "quantityProductsInStock", 1))
         .when()
         .put(PATH + "/999999")
         .then()
         .statusCode(404);
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(Map.of("quantityProductsInStock", 1))
+        .when()
+        .patch(PATH + "/999999")
+        .then()
+        .statusCode(404);
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(Map.of())
+        .when()
+        .patch(PATH + "/999999")
+        .then()
+        .statusCode(422);
 
     given().when().delete(PATH + "/999999").then().statusCode(404);
   }

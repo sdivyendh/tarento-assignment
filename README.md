@@ -96,6 +96,30 @@ transaction, schema-migration, and REST tests therefore do not require Docker.
 Quarkus REST tests normally use port `8081`. This is a temporary test port; the development and
 packaged applications run on port `8080`.
 
+## Test coverage
+
+Run the complete verification build to execute the tests, generate the JaCoCo report, and enforce
+the project-wide minimum of 80% line coverage:
+
+```sh
+./mvnw clean verify
+```
+
+The build fails during the `verify` phase if line coverage is below 80%. Open the local HTML report
+at:
+
+```text
+target/jacoco-report/index.html
+```
+
+Machine-readable reports are also generated at `target/jacoco-report/jacoco.xml` and
+`target/jacoco-report/jacoco.csv`. Generated OpenAPI classes under `com.warehouse.api` are excluded
+because they are not maintained application source.
+
+The GitHub Actions workflow `.github/workflows/coverage.yml` runs the same verification for every
+push and pull request. It adds the current metrics to the workflow summary and stores the complete
+JaCoCo report as the `jacoco-coverage-report` artifact for 30 days.
+
 ## Run the packaged application
 
 The packaged application uses the production profile and expects PostgreSQL at
