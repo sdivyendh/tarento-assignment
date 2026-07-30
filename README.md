@@ -214,6 +214,28 @@ assignments. It enforces these rules:
 Assignments are also kept consistent with lifecycle operations: product/store deletion removes
 related assignments, warehouse replacement transfers them, and warehouse archive removes them.
 
+## Project screenshots
+
+### Fulfilment Console
+
+The Location Rules tab displays the configured locations together with their warehouse and capacity
+utilization.
+
+![Fulfilment Console showing location rules and utilization](docs/images/fulfilment-console-location-rules.png)
+
+### Test coverage
+
+The JaCoCo HTML report provides package-level instruction, branch, line, method, and class coverage.
+
+![JaCoCo coverage report](docs/images/jacoco-coverage-report.png)
+
+### Continuous integration
+
+GitHub Actions verifies the application, enforces the coverage threshold, validates the Docker
+image, and publishes the test, coverage, and packaged-application artifacts.
+
+![Successful GitHub Actions build and test workflow](docs/images/github-actions-ci-success.png)
+
 ## Postman collection
 
 Import:
