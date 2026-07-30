@@ -1,0 +1,55 @@
+name: Test coverage
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Run tests and enforce coverage
+        run: ./mvnw --batch-mode clean verify
+
+      - name: Add coverage to job summary
+        if: always() && hashFiles('target/jacoco-report/jacoco.csv') != ''
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import csv
+
+          with open("target/jacoco-report/jacoco.csv", newline="") as report:
+              rows = list(csv.DictReader(report))
+
+          print("## JaCoCo coverage")
+          print()
+          print("| Metric | Covered | Total | Ratio |")
+          print("| --- | ---: | ---: | ---: |")
+          for metric in ("INSTRUCTION", "BRANCH", "LINE", "METHOD"):
+              covered = sum(int(row[f"{metric}_COVERED"]) for row in rows)
+              missed = sum(int(row[f"{metric}_MISSED"]) for row in rows)
+              total = covered + missed
+              print(f"| {metric.title()} | {covered} | {total} | {covered / total:.2%} |")
+          PY
+
+      - name: Upload JaCoCo report
+        if: always() && hashFiles('target/jacoco-report/**') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-coverage-report
+          path: target/jacoco-report
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,17 @@
+# Maven build output, including JaCoCo reports
+target/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# macOS
+.DS_Store
+
+# Runtime and local environment files
+*.log
+hs_err_pid*
+.env
+.env.local
